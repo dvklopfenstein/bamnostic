@@ -266,6 +266,102 @@ class AlignedSegment(object):
         # This excludes clipping, but includes insertions
         self._query_alignment_attrs()
 
+    def infer_read_length(cigartuples):
+        """infer read length from CIGAR alignment.
+    
+        This method deduces the read length from the CIGAR alignment
+        including hard-clipped bases.
+    
+        Returns None if CIGAR alignment is not present.
+        """
+        return -1
+    #    cdef int32_t l = calculateQueryLengthWithHardClipping(self._delegate)
+    #    if l > 0:
+    #        return l
+    #    else:
+    #        return None
+    #
+    #def inline int32_t calculateQueryLengthWithHardClipping(bam1_t * src):
+    #    """return query length computed from CIGAR alignment.
+    #
+    #    Length includes hard-clipped bases.
+    #
+    #    Return 0 if there is no CIGAR alignment.
+    #    """
+    #
+    #    cdef uint32_t * cigar_p = pysam_bam_get_cigar(src)
+    #
+    #    if cigar_p == NULL:
+    #        return 0
+    #
+    #    cdef uint32_t k, qpos
+    #    cdef int op
+    #    qpos = 0
+    #
+    #    for k from 0 <= k < pysam_get_n_cigar(src):
+    #        op = cigar_p[k] & BAM_CIGAR_MASK
+    #
+    #        if op == BAM_CMATCH or \
+    #           op == BAM_CINS or \
+    #           op == BAM_CSOFT_CLIP or \
+    #           op == BAM_CHARD_CLIP or \
+    #           op == BAM_CEQUAL or \
+    #           op == BAM_CDIFF:
+    #            qpos += cigar_p[k] >> BAM_CIGAR_SHIFT
+    #
+    #    return qpos
+
+
+    def infer_query_length(self, always=False):
+        """infer query length from CIGAR alignment.
+
+        This method deduces the query length from the CIGAR alignment
+        but does not include hard-clipped bases.
+
+        Returns None if CIGAR alignment is not present.
+
+        If *always* is set to True, `infer_read_length` is used instead.
+        This is deprecated and only present for backward compatibility.
+        """
+        if always is True:
+            return self.infer_read_length()
+        return -2
+        #cdef int32_t l = calculateQueryLengthWithoutHardClipping(self._delegate)
+        #if l > 0:
+        #    return l
+        #else:
+        #    return None
+
+    #def calculateQueryLengthWithoutHardClipping(bam1_t * src):
+    #    """return query length computed from CIGAR alignment.
+    #
+    #    Length ignores hard-clipped bases.
+    #
+    #    Return 0 if there is no CIGAR alignment.
+    #    """
+    #
+    #    cdef uint32_t * cigar_p = pysam_bam_get_cigar(src)
+    #
+    #    if cigar_p == NULL:
+    #        return 0
+    #
+    #    cdef uint32_t k, qpos
+    #    cdef int op
+    #    qpos = 0
+    #
+    #    for k from 0 <= k < pysam_get_n_cigar(src):
+    #        op = cigar_p[k] & BAM_CIGAR_MASK
+    #
+    #        if op == BAM_CMATCH or \
+    #           op == BAM_CINS or \
+    #           op == BAM_CSOFT_CLIP or \
+    #           op == BAM_CEQUAL or \
+    #           op == BAM_CDIFF:
+    #            qpos += cigar_p[k] >> BAM_CIGAR_SHIFT
+    #
+    #    return qpos
+
+
     def _unpack_data(self):
         """ Unpack the data for the associated read from the BAM file
 
